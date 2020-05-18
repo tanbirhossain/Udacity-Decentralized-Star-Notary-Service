@@ -1,6 +1,5 @@
 # Truffle version and OpenZeppelin version used in the project.
-
-Truffle version :  v5.0.2
+Truffle version :  v5.0.2  <br />
 openzeppelin-solidity version :  2.1.2
 
 # ERC-721 Token Name
