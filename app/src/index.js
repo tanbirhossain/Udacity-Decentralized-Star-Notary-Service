@@ -18,21 +18,6 @@ const App = {
     } catch (error) {
       console.error("Could not connect to contract or chain.");
     }
-    /* try {
-      // get contract instance
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = starNotaryArtifact.networks[networkId];
-      this.meta = new web3.eth.Contract(
-        starNotaryArtifact.abi,
-        deployedNetwork.address,
-      );
-
-      // get accounts
-      const accounts = await web3.eth.getAccounts();
-      this.account = accounts[0];
-    } catch (error) {
-      console.error("Could not connect to contract or chain.");
-    } */
   },
 
   setStatus: function(message) {
@@ -43,7 +28,6 @@ const App = {
   createStar: async function() {
     const name = document.getElementById("starName").value;
     const id = document.getElementById("starId").value;
-
     await this.meta.createStar(name, id, {from: this.account}, function(err,result) {
       if(err){
         console.log(err);
@@ -63,9 +47,7 @@ const App = {
         App.setStatus(`Error fetching star name.`);
       }
     });
-    
   }
-
 };
 
 window.App = App;
@@ -81,6 +63,5 @@ window.addEventListener("load", async function() {
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     App.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:9545"),);
  }
-
   App.start();
 });
