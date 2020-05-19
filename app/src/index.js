@@ -8,46 +8,44 @@ const App = {
 
   start: async function() {
     const { web3 } = this;
+
     try {
       // get contract instance
-      const networkId = web3.version.network;
+      const networkId = await web3.eth.net.getId();
       const deployedNetwork = starNotaryArtifact.networks[networkId];
-      this.meta = web3.eth.contract(starNotaryArtifact.abi).at(deployedNetwork.address);
-      const accounts = web3.eth.accounts;
+      this.meta = new web3.eth.Contract(
+        starNotaryArtifact.abi,
+        deployedNetwork.address,
+      );
+
+      // get accounts
+      const accounts = await web3.eth.getAccounts();
       this.account = accounts[0];
     } catch (error) {
       console.error("Could not connect to contract or chain.");
     }
   },
-
   setStatus: function(message) {
     const status = document.getElementById("status");
     status.innerHTML = message;
   },
 
   createStar: async function() {
+    const { createStar } = this.meta.methods;
     const name = document.getElementById("starName").value;
     const id = document.getElementById("starId").value;
-    await this.meta.createStar(name, id, {from: this.account}, function(err,result) {
-      if(err){
-        console.log(err);
-      }
-    });
+    await createStar(name, id).send({from: this.account});
     App.setStatus("New Star Owner is " + this.account + ".");
   },
-  
+
   // Implement Task 4 Modify the front end of the DAPP
   lookUp: async function (){
+    const { lookUptokenIdToStarInfo } = this.meta.methods;
     const id = Number(document.getElementById("lookid").value);
-    await this.meta.lookUptokenIdToStarInfo(id, function(err,result) {
-      if(!err){
-        App.setStatus(`Star with ID ${id} is ${result}`);
-      }else{
-        console.log(err);
-        App.setStatus(`Error fetching star name.`);
-      }
-    });
+    const name = await lookUptokenIdToStarInfo(id).call();
+    App.setStatus(`Star with ID ${id} is ${name}`);
   }
+
 };
 
 window.App = App;
